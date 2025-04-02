@@ -63,6 +63,21 @@
       margin: 10px 0;
     }
 
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1.2em;
+      color: white;
+      background-color: #0055cc;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #003d99;
+    }
+
     #time {
       margin-top: 20px;
       font-size: 1.2em;
@@ -90,30 +105,440 @@
   <!-- Speed Control -->
   <label for="speed">Set Speed:</label>
   <input type="range" id="speed" min="0.5" max="2" step="0.1" value="1" />
-  <small>Left = Slow / Right = Fast</small>
+  <small> Left = Slow x0.5 ......... Right = Fast x2 </small>
 
-  <!-- Current Time -->
-  <p id="time">Current Time: Loading...</p>
+  <!-- Start Button -->
+  <button id="start-button">Start</button>
+
+  <!-- Accumulated Time -->
+  <p id="time">Elapsed Time: 0 minutes</p>
 
   <script>
     const verbs = [
-      { en: "Accept", cn: "I accept your apology for being late." },
-      { en: "Achieve", cn: "She worked hard to achieve her goal of running a marathon." },
-      { en: "Act", cn: "You need to act quickly if you want to catch that train." },
-      { en: "Add", cn: "Can you add some salt to the soup, please?" },
-      { en: "Admire", cn: "I admire your dedication to your studies." },
+         {en: "Accept", cn: "I accept your apology for being late."},
+      {en: "Achieve", cn: "She worked hard to achieve her goal of running a marathon."},
+      {en: "Act", cn: "You need to act quickly if you want to catch that train."},
+      {en: "Add", cn: "Can you add some salt to the soup, please?"},
+      {en: "Admire", cn: "I admire your dedication to your studies."},
+      {en: "Admit", cn: "He finally had to admit that he was wrong."},
+      {en: "Adopt", cn: "They decided to adopt a puppy from the shelter."},
+      {en: "Advise", cn: "My doctor advised me to exercise more often."},
+      {en: "Afford", cn: "I can't afford to buy a new car right now."},
+      {en: "Agree", cn: "We all agree that this is the best solution."},
+      {en: "Aim", cn: "She aims to finish her degree by next year."},
+      {en: "Allow", cn: "My parents don't allow pets in the house."},
+      {en: "Announce", cn: "The company announced a new product yesterday."},
+      {en: "Answer", cn: "Could you answer the phone while I'm cooking?"},
+      {en: "Apologize", cn: "I apologize for forgetting your birthday."},
+      {en: "Appear", cn: "He suddenly appeared at the doorway."},
+      {en: "Apply", cn: "I'm going to apply for that job opening."},
+      {en: "Approve", cn: "The bank approved our loan application."},
+      {en: "Argue", cn: "The siblings always argue about what movie to watch."},
+      {en: "Arrange", cn: "Let's arrange to meet at the cafe at noon."},
+      {en: "Arrive", cn: "The train is scheduled to arrive at 3 PM."},
+      {en: "Ask", cn: "Don't be afraid to ask questions if you're confused."},
+      {en: "Attach", cn: "Please attach your resume to the email."},
+      {en: "Attack", cn: "The immune system attacks foreign bacteria."},
+      {en: "Attempt", cn: "He attempted to climb the mountain but had to turn back."},
+      {en: "Attend", cn: "Will you attend the wedding next weekend?"},
+      {en: "Attract", cn: "Bright flowers attract bees and butterflies."},
+      {en: "Avoid", cn: "I try to avoid eating too much sugar."},
+      {en: "Back", cn: "My friends will back me up if I need help."},
+      {en: "Bake", cn: "My grandmother loves to bake cookies for us."},
+      {en: "Balance", cn: "It's important to balance work and personal life."},
+      {en: "Ban", cn: "The school decided to ban cell phones during class."},
+      {en: "Base", cn: "She based her decision on the available facts."},
+      {en: "Be", cn: "I want to be a doctor when I grow up."},
+      {en: "Beat", cn: "Our team beat the champions in the final match."},
+      {en: "Become", cn: "He became more confident after taking the class."},
+      {en: "Begin", cn: "The movie will begin at 7:30 PM."},
+      {en: "Behave", cn: "The children behaved very well during the ceremony."},
+      {en: "Believe", cn: "Do you believe in ghosts?"},
+      {en: "Belong", cn: "These books belong on the top shelf."},
+      {en: "Bend", cn: "You need to bend your knees when lifting heavy objects."},
+      {en: "Bet", cn: "I bet she'll be late again today."},
+      {en: "Bind", cn: "The contract will bind both parties to the agreement."},
+      {en: "Bite", cn: "Be careful - that dog might bite if it feels threatened."},
+      {en: "Bleed", cn: "His knee started to bleed after he fell off his bike."},
+      {en: "Blow", cn: "The wind is starting to blow harder now."},
+      {en: "Boil", cn: "You need to boil the pasta for about 10 minutes."},
+      {en: "Borrow", cn: "Can I borrow your pen for a minute?"},
+      {en: "Break", cn: "Be careful not to break the vase - it's very valuable."},
+      {en: "Breathe", cn: "Take a moment to breathe deeply when you feel stressed."},
+      {en: "Bring", cn: "Can you bring some snacks to the party?"},
+      {en: "Build", cn: "They plan to build a new house next year."},
+      {en: "Burn", cn: "Be careful not to burn yourself on the hot stove."},
+      {en: "Burst", cn: "The balloon burst when it touched the sharp edge."},
+      {en: "Buy", cn: "I need to buy some groceries on my way home."},
+      {en: "Calculate", cn: "Let me calculate how much we'll need to spend."},
+      {en: "Call", cn: "I'll call you when I arrive at the airport."},
+      {en: "Care", cn: "I care about what happens to you."},
+      {en: "Carry", cn: "Can you help me carry these heavy bags?"},
+      {en: "Catch", cn: "He managed to catch the last train home."},
+      {en: "Cause", cn: "Heavy rain caused the flooding in the area."},
+      {en: "Change", cn: "You should change your password regularly."},
+      {en: "Charge", cn: "Don't forget to charge your phone overnight."},
+      {en: "Check", cn: "I need to check my email before the meeting."},
+      {en: "Choose", cn: "You can choose any color you like."},
+      {en: "Claim", cn: "She claims to have seen a UFO last night."},
+      {en: "Clean", cn: "I need to clean my apartment this weekend."},
+      {en: "Clear", cn: "Please clear the table after dinner."},
+      {en: "Climb", cn: "They plan to climb Mount Everest next summer."},
+      {en: "Close", cn: "Don't forget to close the windows before leaving."},
+      {en: "Collect", cn: "He likes to collect rare coins as a hobby."},
+      {en: "Come", cn: "Will you come to my birthday party next week?"},
+      {en: "Comment", cn: "She didn't comment on the controversial issue."},
+      {en: "Commit", cn: "He committed to finishing the project on time."},
+      {en: "Communicate", cn: "It's important to communicate clearly with your team."},
+      {en: "Compare", cn: "Let's compare prices before making a decision."},
+      {en: "Compete", cn: "The athletes will compete in the Olympics next month."},
+      {en: "Complain", cn: "Passengers complained about the flight delay."},
+      {en: "Complete", cn: "I need to complete this assignment by tomorrow."},
+      {en: "Concentrate", cn: "It's hard to concentrate with all this noise."},
+      {en: "Concern", cn: "Environmental issues concern many young people today."},
+      {en: "Confirm", cn: "Please confirm your attendance by email."},
+      {en: "Connect", cn: "The bridge connects the two islands."},
+      {en: "Consider", cn: "We should consider all options before deciding."},
+      {en: "Consist", cn: "The team consists of five experienced players."},
+      {en: "Contact", cn: "I'll contact you if I need more information."},
+      {en: "Contain", cn: "This box contains all my childhood photos."},
+      {en: "Continue", cn: "Let's continue this discussion tomorrow."},
+      {en: "Contribute", cn: "Everyone should contribute to keeping the office clean."},
+      {en: "Control", cn: "The pilot managed to control the plane during the storm."},
+      {en: "Convert", cn: "You need to convert the measurement from inches to centimeters."},
+      {en: "Cook", cn: "My husband loves to cook dinner on weekends."},
+      {en: "Copy", cn: "Please don't copy other students' work."},
+      {en: "Correct", cn: "The teacher will correct our tests by Monday."},
+      {en: "Cost", cn: "The new laptop cost more than I expected."},
+      {en: "Count", cn: "Can you count how many people are in the room?"},
+      {en: "Cover", cn: "Make sure to cover the pool when it's not in use."},
+      {en: "Create", cn: "The artist will create a new sculpture for the park."},
+      {en: "Cross", cn: "Look both ways before you cross the street."},
+      {en: "Cry", cn: "The baby started to cry when his mother left."},
+      {en: "Cut", cn: "Be careful not to cut yourself with that knife."},
+      {en: "Dance", cn: "They love to dance at wedding parties."},
+      {en: "Deal", cn: "The company deals with international clients."},
+      {en: "Decide", cn: "We need to decide where to go for vacation."},
+      {en: "Define", cn: "It's difficult to define what makes a good leader."},
+      {en: "Deliver", cn: "The package should be delivered by noon tomorrow."},
+      {en: "Demand", cn: "Customers demand high-quality products and services."},
+      {en: "Deny", cn: "He continued to deny any involvement in the incident."},
+      {en: "Depend", cn: "The success of the project depends on everyone's effort."},
+      {en: "Describe", cn: "Can you describe what happened in detail?"},
+      {en: "Design", cn: "My sister will design the invitations for the wedding."},
+      {en: "Destroy", cn: "The fire destroyed most of the building."},
+      {en: "Develop", cn: "The company is developing a new smartphone app."},
+      {en: "Die", cn: "Unfortunately, many plants died during the drought."},
+      {en: "Differ", cn: "Their opinions differ on political issues."},
+      {en: "Dig", cn: "The children like to dig holes at the beach."},
+      {en: "Discover", cn: "Scientists discovered a new species in the rainforest."},
+      {en: "Discuss", cn: "Let's discuss the proposal at tomorrow's meeting."},
+      {en: "Display", cn: "The museum will display the ancient artifacts next month."},
+      {en: "Divide", cn: "Let's divide the cake into equal pieces."},
+      {en: "Do", cn: "What do you want to do this weekend?"},
+      {en: "Draw", cn: "My daughter loves to draw pictures of animals."},
+      {en: "Dream", cn: "I often dream about flying at night."},
+      {en: "Drink", cn: "Remember to drink plenty of water during exercise."},
+      {en: "Drive", cn: "My father taught me how to drive when I was 16."},
+      {en: "Drop", cn: "Be careful not to drop your phone on the concrete."},
+      {en: "Earn", cn: "He earns a good salary as a software engineer."},
+      {en: "Eat", cn: "We usually eat dinner around 7 PM."},
+      {en: "Edit", cn: "I need to edit my essay before submitting it."},
+      {en: "Educate", cn: "Parents and teachers work together to educate children."},
+      {en: "Emphasize", cn: "The speaker emphasized the importance of teamwork."},
+      {en: "Enable", cn: "The new software enables users to work more efficiently."},
+      {en: "Encourage", cn: "Good teachers encourage students to ask questions."},
+      {en: "End", cn: "The movie ends with a surprising twist."},
+      {en: "Enjoy", cn: "I really enjoy listening to jazz music."},
+      {en: "Enter", cn: "You need a password to enter the secure website."},
+      {en: "Establish", cn: "They want to establish a new branch in Asia."},
+      {en: "Estimate", cn: "The contractor will estimate the cost of repairs."},
+      {en: "Examine", cn: "The doctor will examine you to determine the cause of your symptoms."},
+      {en: "Exist", cn: "Dinosaurs existed millions of years ago."},
+      {en: "Expand", cn: "The company plans to expand into international markets."},
+      {en: "Expect", cn: "We expect the package to arrive tomorrow."},
+      {en: "Experience", cn: "I've never experienced such cold weather before."},
+      {en: "Explain", cn: "Can you explain how this machine works?"},
+      {en: "Express", cn: "It's important to express your feelings honestly."},
+      {en: "Extend", cn: "The hotel offered to extend our stay for two more nights."},
+      {en: "Face", cn: "We'll face many challenges during this project."},
+      {en: "Fail", cn: "Don't worry if you fail the first time; keep trying."},
+      {en: "Fall", cn: "Be careful not to fall on the icy sidewalk."},
+      {en: "Feed", cn: "Don't forget to feed the dog before we leave."},
+      {en: "Feel", cn: "I feel tired after working all day."},
+      {en: "Fight", cn: "The siblings fight over the TV remote all the time."},
+      {en: "Fill", cn: "Please fill the water bottle before we go hiking."},
+      {en: "Find", cn: "I couldn't find my keys this morning."},
+      {en: "Finish", cn: "I need to finish this report by 5 PM."},
+      {en: "Fit", cn: "These shoes don't fit me anymore."},
+      {en: "Fix", cn: "The mechanic will fix my car tomorrow."},
+      {en: "Fly", cn: "We're going to fly to Paris next month."},
+      {en: "Focus", cn: "Try to focus on your studies and avoid distractions."},
+      {en: "Follow", cn: "Please follow the instructions carefully."},
+      {en: "Forget", cn: "Don't forget to turn off the lights when you leave."},
+      {en: "Form", cn: "Water droplets form on cold surfaces."},
+      {en: "Gain", cn: "She gained valuable experience working abroad."},
+      {en: "Get", cn: "I need to get some milk from the store."},
+      {en: "Give", cn: "He gave me a book for my birthday."},
+      {en: "Go", cn: "Let's go to the beach this weekend."},
+      {en: "Grow", cn: "Children grow quickly during their teenage years."},
+      {en: "Handle", cn: "She knows how to handle difficult situations."},
+      {en: "Hang", cn: "Could you hang this picture on the wall?"},
+      {en: "Happen", cn: "What happened at the meeting yesterday?"},
+      {en: "Hate", cn: "I hate getting up early on cold mornings."},
+      {en: "Have", cn: "We have three cats at home."},
+      {en: "Hear", cn: "I can hear someone knocking at the door."},
+      {en: "Help", cn: "Can you help me move this furniture?"},
+      {en: "Hide", cn: "The children like to hide and seek during playtime."},
+      {en: "Hit", cn: "The baseball hit the window and broke it."},
+      {en: "Hold", cn: "Please hold the door open for me."},
+      {en: "Hope", cn: "I hope the weather will be nice tomorrow."},
+      {en: "Hurt", cn: "Be careful not to hurt yourself on that sharp edge."},
+      {en: "Identify", cn: "The police asked witnesses to identify the suspect."},
+      {en: "Imagine", cn: "Can you imagine living without the internet?"},
+      {en: "Improve", cn: "Exercise can improve your overall health."},
+      {en: "Include", cn: "The price includes breakfast and dinner."},
+      {en: "Increase", cn: "The company decided to increase all employees' salaries."},
+      {en: "Indicate", cn: "Red sky at night indicates good weather tomorrow."},
+      {en: "Influence", cn: "Parents greatly influence their children's behavior."},
+      {en: "Inform", cn: "Please inform me if there are any changes to the plan."},
+      {en: "Insist", cn: "She insisted on paying for dinner."},
+      {en: "Install", cn: "I need to install the new software on my computer."},
+      {en: "Intend", cn: "I intend to finish this book by next week."},
+      {en: "Introduce", cn: "Let me introduce you to my colleague."},
+      {en: "Invest", cn: "It's wise to invest in your education."},
+      {en: "Investigate", cn: "The police are investigating the robbery."},
+      {en: "Involve", cn: "The project involves collaboration with international teams."},
+      {en: "Issue", cn: "The bank will issue new credit cards next month."},
+      {en: "Join", cn: "Would you like to join us for dinner tonight?"},
+      {en: "Jump", cn: "The children love to jump in puddles after it rains."},
+      {en: "Keep", cn: "Please keep your tickets until the end of the journey."},
+      {en: "Kill", cn: "Smoking can kill thousands of people every year."},
+      {en: "Know", cn: "Do you know the way to the train station?"},
+      {en: "Land", cn: "The plane will land in about 20 minutes."},
+      {en: "Last", cn: "The concert lasted for over three hours."},
+      {en: "Laugh", cn: "The audience laughed at the comedian's jokes."},
+      {en: "Launch", cn: "The company will launch its new product next month."},
+      {en: "Learn", cn: "It's never too late to learn a new language."},
+      {en: "Leave", cn: "What time do we need to leave for the airport?"},
+      {en: "Lend", cn: "Could you lend me some money until payday?"},
+      {en: "Let", cn: "My parents let me stay out until midnight."},
+      {en: "Lie", cn: "I'm going to lie down for a while; I have a headache."},
+      {en: "Like", cn: "I really like your new haircut."},
+      {en: "Limit", cn: "Parents should limit screen time for young children."},
+      {en: "Link", cn: "The article links climate change to extreme weather events."},
+      {en: "Listen", cn: "It's important to listen carefully during lectures."},
+      {en: "Live", cn: "My grandparents live in a small village by the sea."},
+      {en: "Load", cn: "Help me load these boxes into the truck."},
+      {en: "Look", cn: "Look at that beautiful sunset!"},
+      {en: "Lose", cn: "I always lose my keys when I'm in a hurry."},
+      {en: "Love", cn: "I love spending time with my family."},
+      {en: "Maintain", cn: "It's important to maintain good posture when sitting."},
+      {en: "Make", cn: "My grandmother makes the best apple pie."},
+      {en: "Manage", cn: "She manages a team of fifteen people."},
+      {en: "Mark", cn: "The teacher will mark our essays by next week."},
+      {en: "Match", cn: "His tie doesn't match his shirt."},
+      {en: "Matter", cn: "What matters most is that everyone is safe."},
+      {en: "Mean", cn: "What does this word mean in English?"},
+      {en: "Measure", cn: "The doctor will measure your blood pressure."},
+      {en: "Meet", cn: "Let's meet at the coffee shop at 3 PM."},
+      {en: "Mention", cn: "Don't mention the surprise party to Sarah."},
+      {en: "Mind", cn: "Would you mind closing the window? It's getting cold."},
+      {en: "Miss", cn: "I miss my friends who live abroad."},
+      {en: "Mix", cn: "Mix the ingredients together until smooth."},
+      {en: "Move", cn: "We're planning to move to a bigger house next year."},
+      {en: "Name", cn: "They named their daughter after her grandmother."},
+      {en: "Need", cn: "I need to buy some new shoes for work."},
+      {en: "Note", cn: "Please note that the office will be closed on Monday."},
+      {en: "Notice", cn: "Did you notice anything unusual at the meeting?"},
+      {en: "Obtain", cn: "You need to obtain a permit before starting construction."},
+      {en: "Occur", cn: "The accident occurred at the busy intersection."},
+      {en: "Offer", cn: "The company offered her a higher salary to stay."},
+      {en: "Open", cn: "What time does the museum open tomorrow?"},
+      {en: "Operate", cn: "The surgeon will operate on the patient tomorrow."},
+      {en: "Order", cn: "I'd like to order a pizza for delivery."},
+      {en: "Organize", cn: "Let's organize a surprise party for her birthday."},
+      {en: "Own", cn: "They own a beautiful house by the lake."},
+      {en: "Pack", cn: "Don't forget to pack your toothbrush for the trip."},
+      {en: "Paint", cn: "We're going to paint the living room next weekend."},
+      {en: "Park", cn: "You can park your car in the garage."},
+      {en: "Pass", cn: "She passed her driving test on the first attempt."},
+      {en: "Pay", cn: "Don't forget to pay the electricity bill."},
+      {en: "Perform", cn: "The band will perform their new songs at the concert."},
+      {en: "Pick", cn: "Can you pick me up from the airport?"},
+      {en: "Place", cn: "Please place your order at the counter."},
+      {en: "Plan", cn: "We're planning to visit Japan next summer."},
+      {en: "Play", cn: "The children love to play in the park."},
+      {en: "Point", cn: "The guide pointed to the historic building."},
+      {en: "Position", cn: "The company positioned itself as a leader in the industry."},
+      {en: "Possess", cn: "She possesses excellent communication skills."},
+      {en: "Post", cn: "I'll post the package tomorrow morning."},
+      {en: "Pour", cn: "Could you pour me a glass of water, please?"},
+      {en: "Practice", cn: "You need to practice regularly to improve your skills."},
+      {en: "Prefer", cn: "I prefer tea to coffee in the morning."},
+      {en: "Prepare", cn: "Let's prepare dinner together tonight."},
+      {en: "Present", cn: "She will present her research findings at the conference."},
+      {en: "Press", cn: "Press the button to start the machine."},
+      {en: "Prevent", cn: "Regular exercise helps prevent many diseases."},
+      {en: "Print", cn: "Can you print these documents for me?"},
+      {en: "Produce", cn: "This factory produces thousands of cars each month."},
+      {en: "Protect", cn: "Sunscreen helps protect your skin from UV rays."},
+      {en: "Prove", cn: "The evidence proved his innocence."},
+      {en: "Provide", cn: "The hotel provides free breakfast for guests."},
+      {en: "Pull", cn: "Pull the door towards you to open it."},
+      {en: "Push", cn: "You need to push the door to enter the building."},
+      {en: "Put", cn: "Put your coat on; it's cold outside."},
+      {en: "Qualify", cn: "She qualified for the finals of the competition."},
+      {en: "Question", cn: "The lawyer questioned the witness carefully."},
+      {en: "Quit", cn: "He quit smoking five years ago."},
+      {en: "Raise", cn: "They raised three children in this house."},
+      {en: "Reach", cn: "We should reach the airport by 5 PM."},
+      {en: "Read", cn: "I like to read before going to bed."},
+      {en: "Realize", cn: "I suddenly realized that I had left my keys at home."},
+      {en: "Receive", cn: "Did you receive my email yesterday?"},
+      {en: "Recognize", cn: "I didn't recognize you with your new haircut."},
+      {en: "Recommend", cn: "Can you recommend a good restaurant nearby?"},
+      {en: "Record", cn: "The secretary recorded all the important points from the meeting."},
+      {en: "Reduce", cn: "We need to reduce our carbon footprint."},
+      {en: "Refer", cn: "The doctor referred me to a specialist."},
+      {en: "Reflect", cn: "The calm lake reflected the mountains perfectly."},
+      {en: "Refuse", cn: "She refused to answer any questions about the incident."},
+      {en: "Regard", cn: "Many people regard him as one of the greatest scientists of our time."},
+      {en: "Regret", cn: "I regret not studying harder in school."},
+      {en: "Relate", cn: "I really relate to the main character in this novel."},
+      {en: "Release", cn: "The new movie will be released next month."},
+      {en: "Remain", cn: "Please remain seated until the plane has stopped."},
+      {en: "Remember", cn: "Do you remember where you parked the car?"},
+      {en: "Remove", cn: "Please remove your shoes before entering the house."},
+      {en: "Repeat", cn: "Could you repeat that question, please?"},
+      {en: "Replace", cn: "We need to replace the broken window."},
+      {en: "Reply", cn: "She didn't reply to my email yet."},
+      {en: "Report", cn: "The witness reported the accident to the police."},
+      {en: "Represent", cn: "The lawyer will represent you in court."},
+      {en: "Request", cn: "I requested a vegetarian meal for the flight."},
+      {en: "Require", cn: "This job requires excellent communication skills."},
+      {en: "Research", cn: "She's researching the effects of climate change."},
+      {en: "Reserve", cn: "I'd like to reserve a table for two at 8 PM."},
+      {en: "Resist", cn: "It's hard to resist chocolate when you're on a diet."},
+      {en: "Resolve", cn: "The mediator helped the parties resolve their dispute."},
+      {en: "Respond", cn: "How did she respond to your suggestion?"},
+      {en: "Rest", cn: "You should rest after such a long journey."},
+      {en: "Result", cn: "His hard work resulted in excellent grades."},
+      {en: "Return", cn: "When do you plan to return from your vacation?"},
+      {en: "Reveal", cn: "The company will reveal its new product next week."},
+      {en: "Review", cn: "The manager will review your proposal tomorrow."},
+      {en: "Ride", cn: "I learned to ride a bike when I was six."},
+      {en: "Ring", cn: "The telephone rang just as I was leaving."},
+      {en: "Rise", cn: "The sun rises early in summer."},
+      {en: "Risk", cn: "Don't risk your safety by driving too fast."},
+      {en: "Roll", cn: "The ball rolled down the hill."},
+      {en: "Run", cn: "She runs five miles every morning."},
+      {en: "Save", cn: "Regular backups help save your important data."},
+      {en: "Say", cn: "What did the doctor say about your test results?"},
+      {en: "See", cn: "Can you see that building in the distance?"},
+      {en: "Seek", cn: "Many people seek advice before making big decisions."},
+      {en: "Seem", cn: "He seems very confident about the presentation."},
+      {en: "Sell", cn: "They plan to sell their house and move to the countryside."},
+      {en: "Send", cn: "I'll send you the information by email."},
+      {en: "Separate", cn: "Make sure to separate the colored clothes from the white ones."},
+      {en: "Serve", cn: "Dinner will be served at 7 PM."},
+      {en: "Set", cn: "Let's set a date for our next meeting."},
+      {en: "Settle", cn: "It took time for the new residents to settle in the neighborhood."},
+      {en: "Shake", cn: "The earthquake made the buildings shake."},
+      {en: "Share", cn: "I'd like to share my experience with you."},
+      {en: "Shoot", cn: "The photographer will shoot the wedding photos tomorrow."},
+      {en: "Shop", cn: "I need to shop for groceries this afternoon."},
+      {en: "Show", cn: "Can you show me how to use this app?"},
+      {en: "Shut", cn: "Please shut the door when you leave."},
+      {en: "Sign", cn: "Don't forget to sign the contract before returning it."},
+      {en: "Sing", cn: "She loves to sing in the shower."},
+      {en: "Sit", cn: "Let's sit in the shade; it's too hot in the sun."},
+      {en: "Sleep", cn: "Children should sleep for at least 8 hours a night."},
+      {en: "Slide", cn: "The children enjoy sliding down the snow-covered hill."},
+      {en: "Smile", cn: "The baby smiled when she saw her mother."},
+      {en: "Solve", cn: "The detective solved the mystery quickly."},
+      {en: "Sound", cn: "That sounds like a great idea."},
+      {en: "Speak", cn: "He speaks three languages fluently."},
+      {en: "Specify", cn: "Please specify your preferred delivery date."},
+      {en: "Spend", cn: "We spent the weekend at the beach."},
+      {en: "Split", cn: "Let's split the bill equally."},
+      {en: "Spread", cn: "The news spread quickly through the small town."},
+      {en: "Stand", cn: "Please stand in line at the checkout."},
+      {en: "Start", cn: "The race will start at noon."},
+      {en: "State", cn: "The witness stated that he was at home during the incident."},
+      {en: "Stay", cn: "We plan to stay at a hotel near the beach."},
+      {en: "Step", cn: "Be careful not to step on the wet floor."},
+      {en: "Stick", cn: "The glue will make the paper stick to the wall."},
+      {en: "Stop", cn: "The rain finally stopped after three days."},
+      {en: "Store", cn: "We store our winter clothes in the attic."},
+      {en: "Study", cn: "My daughter studies medicine at the university."},
+      {en: "Submit", cn: "You need to submit your application by Friday."},
+      {en: "Succeed", cn: "With hard work and determination, you will succeed."},
+      {en: "Suffer", cn: "Many people suffer from back pain."},
+      {en: "Suggest", cn: "I suggest taking the train instead of driving."},
+      {en: "Supply", cn: "The company supplies office equipment to businesses."},
+      {en: "Support", cn: "My family always supports me in difficult times."},
+      {en: "Suppose", cn: "I suppose we could go to the movies tonight."},
+      {en: "Surprise", cn: "The unexpected gift surprised her."},
+      {en: "Survive", cn: "Few plants can survive in the desert."},
+      {en: "Suspect", cn: "The police suspect the neighbor of stealing the package."},
+      {en: "Suspend", cn: "The school decided to suspend the student for one week."},
+      {en: "Switch", cn: "Let's switch seats so you can see better."},
+      {en: "Take", cn: "Don't forget to take your medicine after dinner."},
+      {en: "Talk", cn: "We need to talk about our vacation plans."},
+      {en: "Teach", cn: "She teaches English at the local high school."},
+      {en: "Tell", cn: "Can you tell me how to get to the train station?"},
+      {en: "Tend", cn: "Children tend to get excited before Christmas."},
+      {en: "Test", cn: "The company tests all products before selling them."},
+      {en: "Thank", cn: "I want to thank you for all your help."},
+      {en: "Think", cn: "What do you think about the new proposal?"},
+      {en: "Throw", cn: "Don't throw trash on the ground."},
+      {en: "Touch", cn: "Please don't touch the artwork."},
+      {en: "Train", cn: "He trains at the gym five times a week."},
+      {en: "Transfer", cn: "The bank will transfer the money to your account."},
+      {en: "Transform", cn: "Education can transform lives."},
+      {en: "Translate", cn: "Could you translate this document into French?"},
+      {en: "Treat", cn: "The doctor treated her for a minor infection."},
+      {en: "Try", cn: "I'll try to finish the report by tomorrow."},
+      {en: "Turn", cn: "Turn left at the next intersection."},
+      {en: "Understand", cn: "I don't understand how this machine works."},
+      {en: "Undertake", cn: "The company undertook a major renovation project."},
+      {en: "Unite", cn: "The crisis united the community."},
+      {en: "Use", cn: "We use solar panels to generate electricity."},
+      {en: "Value", cn: "I value your opinion on this matter."},
+      {en: "Vary", cn: "Prices vary depending on the season."},
+      {en: "View", cn: "You can view the exhibition until the end of the month."},
+      {en: "Visit", cn: "We plan to visit my grandparents this weekend."},
+      {en: "Vote", cn: "All citizens should vote in the election."},
+      {en: "Wait", cn: "I'll wait for you at the entrance."},
+      {en: "Walk", cn: "She walks to work every day."},
+      {en: "Want", cn: "What do you want for dinner tonight?"},
+      {en: "Warn", cn: "The weather forecast warned of strong winds."},
+      {en: "Wash", cn: "Don't forget to wash your hands before eating."},
+      {en: "Watch", cn: "We watched the sunset from the beach."},
+      {en: "Wear", cn: "She always wears elegant clothes to work."},
+      {en: "Welcome", cn: "They welcomed us warmly into their home."},
+      {en: "Win", cn: "Our team won the championship last year."},
+      {en: "Wish", cn: "I wish you all the best in your new job."},
+      {en: "Withdraw", cn: "I need to withdraw some cash from the ATM."},
+      {en: "Work", cn: "She works as a doctor at the local hospital."},
+      {en: "Worry", cn: "Don't worry about the exam; you're well prepared."},
+      {en: "Write", cn: "She writes poetry in her spare time."},
+      {en: "Yield", cn: "This investment should yield a good return."}
     ];
 
     let index = 0; // Current index in the verbs array
     let speed = 1; // Default speed
     let americanVoice = null; // Selected voice
     let interval; // Interval for flashing verbs
-    const totalTime = 30 * 60 * 1000; // 30 minutes in milliseconds
+    let startTime; // Start time of the app
+    let elapsedTimeInterval; // Interval for updating elapsed time
 
     const numberElement = document.getElementById("number");
     const verbElement = document.getElementById("verb");
     const exampleElement = document.getElementById("example");
     const speedControl = document.getElementById("speed");
+    const startButton = document.getElementById("start-button");
     const timeElement = document.getElementById("time");
 
     // Load voices and pick an American English voice
@@ -167,35 +592,28 @@
       speed = parseFloat(speedControl.value);
     });
 
-    // Display current time
-    function updateTime() {
+    // Update elapsed time
+    function updateElapsedTime() {
       const now = new Date();
-      timeElement.textContent = `Current Time: ${now.toLocaleTimeString()}`;
+      const elapsedTime = Math.floor((now - startTime) / 60000); // Convert milliseconds to minutes
+      timeElement.textContent = `Elapsed Time: ${elapsedTime} minutes`;
     }
 
-    // Start the app and recycle every 30 minutes
-    async function init() {
-      // Load voices and start the game
-      await loadVoice();
-      updateVerb();
+    // Start the app
+    async function startApp() {
+      startButton.style.display = "none"; // Hide the start button
+      startTime = new Date(); // Record the start time
+      elapsedTimeInterval = setInterval(updateElapsedTime, 1000); // Update elapsed time every second
 
-      // Recycle the game every 30 minutes
-      setInterval(() => {
-        index = 0; // Reset to the first verb
-        updateVerb();
-      }, totalTime);
-
-      // Update the current time every second
-      setInterval(updateTime, 1000);
+      await loadVoice(); // Load voices
+      updateVerb(); // Start the app
     }
+
+    // Attach event listener to the start button
+    startButton.addEventListener("click", startApp);
 
     // Wait for voices to load before starting
-    speechSynthesis.onvoiceschanged = init;
-
-    // If voices are already loaded, start immediately
-    if (speechSynthesis.getVoices().length > 0) {
-      init();
-    }
+    speechSynthesis.onvoiceschanged = loadVoice;
   </script>
 </body>
 </html>
