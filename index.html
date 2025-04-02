@@ -103,9 +103,9 @@
   </div>
 
   <!-- Speed Control -->
-  <label for="speed">Set Speed:</label>
+  <label for="speed"></label>
   <input type="range" id="speed" min="0.5" max="2" step="0.1" value="1" />
-  <small> x0.5 ............................. x2 </small>
+  <small> x0.5 .............  Set Speed  ................ x2 </small>
 
   <!-- Start Button -->
   <button id="start-button">Start</button>
@@ -574,10 +574,10 @@
       }
       utterance.rate = speed; // Adjust speech rate based on slider
       speechSynthesis.speak(utterance);
-
+    
       // Wait for the speech to finish before scheduling the next flash
       utterance.onend = () => {
-        setFlashTimer();
+        updateVerb(); // Immediately move to the next verb after speech
       };
     }
 
