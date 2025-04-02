@@ -83,12 +83,12 @@
 
   <!-- Speed Control -->
   <label for="speed">Set Speed:</label>
-  <input type="range" id="speed" min="0.3" max="2" step="0.1" value="1" />
-  <small>Left = Slow        ...............        Right = Fast</small>
+  <input type="range" id="speed" min="0.5" max="2" step="0.1" value="1" />
+  <small>Left = Slow / Right = Fast</small>
 
   <script>
     const verbs = [
-       {en: "Accept", cn: "I accept your apology for being late."},
+    {en: "Accept", cn: "I accept your apology for being late."},
       {en: "Achieve", cn: "She worked hard to achieve her goal of running a marathon."},
       {en: "Act", cn: "You need to act quickly if you want to catch that train."},
       {en: "Add", cn: "Can you add some salt to the soup, please?"},
@@ -497,7 +497,7 @@
       {en: "Work", cn: "She works as a doctor at the local hospital."},
       {en: "Worry", cn: "Don't worry about the exam; you're well prepared."},
       {en: "Write", cn: "She writes poetry in her spare time."},
-      {en: "Yield", cn: "This investment should yield a good return."}
+      {en: "Yield", cn: "This investment should yield a good return."},
     ];
 
     let index = 0; // Current verb index
@@ -510,72 +510,68 @@
     const exampleElement = document.getElementById("example");
     const speedControl = document.getElementById("speed");
 
-    // Function to load the correct voice
+    // Load voices and select an American English voice
     function loadVoice() {
-      return new Promise((resolve) => {
-        const voices = speechSynthesis.getVoices();
+      const voices = speechSynthesis.getVoices();
+      americanVoice = voices.find(voice => voice.lang === "en-US");
 
-        // Find an American English voice
-        americanVoice = voices.find(voice => voice.lang === "en-US");
-
-        if (!americanVoice) {
-          console.warn("No American English voice found. Using the default voice.");
-        }
-
-        resolve();
-      });
+      if (!americanVoice) {
+        console.warn("No American English voice found. Using default voice.");
+      }
     }
 
-    // Function to update the verb and example
+    // Update the verb and example
     function updateVerb() {
       const currentVerb = verbs[index];
-      numberElement.textContent = index + 1;
-      verbElement.textContent = currentVerb.en;
-      exampleElement.textContent = currentVerb.cn;
+      numberElement.textContent = index + 1; // Display the current number
+      verbElement.textContent = currentVerb.en; // Display the verb
+      exampleElement.textContent = currentVerb.cn; // Display the example sentence
 
+      // Pronounce the verb and example
       pronounceVerb(currentVerb.en, currentVerb.cn);
 
-      // Increment index and loop back if necessary
-      index = (index + 1) % verbs.length;
+      // Move to the next verb
+      index = (index + 1) % verbs.length; // Loop back to the first verb if at the end
     }
 
-    // Function to pronounce the verb and example
+    // Pronounce the verb and example
     function pronounceVerb(verb, example) {
       const utterance = new SpeechSynthesisUtterance(`${verb}. ${example}`);
       if (americanVoice) {
         utterance.voice = americanVoice; // Use the American English voice
       }
-      utterance.rate = speed; // Set the rate according to the slider
+      utterance.rate = speed; // Set the speech rate
       speechSynthesis.speak(utterance);
 
-      // Wait until speech ends to flash the next verb
+      // Wait for the speech to finish, then flash the next verb
       utterance.onend = () => {
-        setFlashTimer();
+        setFlashTimer(); // Set the timer for the next verb
       };
     }
 
     // Set the timer for flashing the next verb
     function setFlashTimer() {
-      clearInterval(interval); // Clear any existing interval
-      interval = setTimeout(updateVerb, speed * 2000); // Adjust flash speed
+      clearTimeout(interval); // Clear any existing timer
+      interval = setTimeout(updateVerb, speed * 2000); // Adjust flash speed dynamically
     }
 
     // Handle speed slider input
     speedControl.addEventListener("input", () => {
-      speed = parseFloat(speedControl.value); // Update speed
+      speed = parseFloat(speedControl.value); // Update the current speed
     });
 
     // Initialize the app
     function init() {
       // Load voices and start the app
-      speechSynthesis.onvoiceschanged = async () => {
-        await loadVoice();
-        updateVerb(); // Start displaying verbs
+      speechSynthesis.onvoiceschanged = () => {
+        loadVoice();
+        updateVerb(); // Start with the first verb
       };
 
       // If voices are already loaded, start immediately
       if (speechSynthesis.getVoices().length > 0) {
-        loadVoice().then(updateVerb);
+        loadVoice();
+        updateVerb();
       }
     }
 
