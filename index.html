@@ -24,8 +24,6 @@
       border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       background-color: #ffffff;
-      transform: scale(0.9);
-      animation: fadeScale 1s ease-in-out infinite alternate;
       max-width: 90%;
     }
 
@@ -66,17 +64,19 @@
       margin: 10px 0;
     }
 
-    select {
+    button {
       margin-top: 15px;
+      padding: 10px 20px;
       font-size: 1em;
-      padding: 5px 10px;
-      border: 1px solid #ddd;
+      color: white;
+      background-color: #0055cc;
+      border: none;
       border-radius: 5px;
+      cursor: pointer;
     }
 
-    @keyframes fadeScale {
-      from { opacity: 0.5; transform: scale(0.9); }
-      to { opacity: 1; transform: scale(1); }
+    button:hover {
+      background-color: #003d99;
     }
 
     @media (max-width: 600px) {
@@ -96,28 +96,17 @@
     <p id="example">Loading example...</p>
   </div>
 
-  <!-- Flash Speed Control -->
-  <label for="speed">Set Flash Speed:</label>
-  <input type="range" id="speed" min="0.5" max="5" step="0.5" value="1" />
-  <small>Left = 1s (normal), Right = 5s (faster)</small>
+  <!-- Speed Control -->
+  <label for="speed">Set Speed:</label>
+  <input type="range" id="speed" min="0.5" max="2" step="0.1" value="1" />
+  <small>Left = Slow / Right = Fast</small>
 
-  <!-- Voice Speed Control -->
-  <label for="voiceSpeed">Set Voice Speed:</label>
-  <input type="range" id="voiceSpeed" min="0.5" max="2" step="0.25" value="1" />
-  <small>Left = *1 (normal), Right = *2 (faster)</small>
-
-  <!-- Verb Starting Point Selector -->
-  <label for="startFrom">Start From:</label>
-  <select id="startFrom">
-    <option value="0">Number 1</option>
-    <option value="200">Number 201</option>
-    <option value="300">Number 301</option>
-    <option value="400">Number 401</option>
-  </select>
+  <!-- Toggle Voice -->
+  <button id="toggle-voice">Turn Voice On</button>
 
   <script>
     const verbs = [
-      {en: "Accept", cn: "I accept your apology for being late."},
+          {en: "Accept", cn: "I accept your apology for being late."},
       {en: "Achieve", cn: "She worked hard to achieve her goal of running a marathon."},
       {en: "Act", cn: "You need to act quickly if you want to catch that train."},
       {en: "Add", cn: "Can you add some salt to the soup, please?"},
@@ -530,55 +519,69 @@
     ];
 
     let index = 0;
+    let speed = 1; // Default speed
+    let useVoice = false; // Voice is off by default
+    let interval;
+
     const numberElement = document.getElementById('number');
     const verbElement = document.getElementById('verb');
     const exampleElement = document.getElementById('example');
     const speedControl = document.getElementById('speed');
-    const voiceSpeedControl = document.getElementById('voiceSpeed');
-    const startFromSelect = document.getElementById('startFrom');
-
-    let flashSpeed = 1; // Default flash speed
-    let voiceSpeed = 1; // Default voice speed
-    let interval;
+    const toggleVoiceButton = document.getElementById('toggle-voice');
 
     // Update verb and example
     function updateVerb() {
       const currentVerb = verbs[index];
-      numberElement.textContent = (index + 1);
+      numberElement.textContent = index + 1;
       verbElement.textContent = currentVerb.en;
       exampleElement.textContent = currentVerb.cn;
-      pronounceVerb(currentVerb.en, currentVerb.cn);
+
+      if (useVoice) {
+        pronounceVerb(currentVerb.en, currentVerb.cn);
+      } else {
+        // If voice is off, still respect the speed for flashing
+        setFlashTimer();
+      }
+
       index = (index + 1) % verbs.length;
     }
 
     // Pronounce the verb and example
     function pronounceVerb(verb, example) {
       const utterance = new SpeechSynthesisUtterance(`${verb}. ${example}`);
-      utterance.rate = voiceSpeed;
+      utterance.rate = speed; // Adjust speech speed
       speechSynthesis.speak(utterance);
+
+      // Ensure flash speed matches the spoken duration
+      utterance.onend = () => {
+        setFlashTimer(); // Move to the next verb after speech ends
+      };
     }
 
-    // Adjust flash speed
+    // Set the timer for flashing the next verb
+    function setFlashTimer() {
+      clearInterval(interval); // Stop any existing interval
+      interval = setTimeout(updateVerb, speed * 2000); // Use speed to determine the flash duration
+    }
+
+    // Adjust speed for both flash and voice
     speedControl.addEventListener('input', () => {
-      flashSpeed = speedControl.value;
-      clearInterval(interval);
-      interval = setInterval(updateVerb, flashSpeed * 1000);
+      speed = parseFloat(speedControl.value); // Update speed value
     });
 
-    // Adjust voice speed
-    voiceSpeedControl.addEventListener('input', () => {
-      voiceSpeed = voiceSpeedControl.value;
+    // Toggle voice on/off
+    toggleVoiceButton.addEventListener('click', () => {
+      useVoice = !useVoice;
+      toggleVoiceButton.textContent = useVoice ? "Turn Voice Off" : "Turn Voice On";
+
+      // Start or reset the flash loop when toggling voice
+      if (!useVoice) {
+        setFlashTimer(); // Restart flash without voice
+      }
     });
 
-    // Handle starting point selection
-    startFromSelect.addEventListener('change', () => {
-      index = parseInt(startFromSelect.value, 10);
-      updateVerb(); // Immediately update the verb after selection
-    });
-
-    // Initial display
-    updateVerb();
-    interval = setInterval(updateVerb, flashSpeed * 1000); // Set interval based on flash speed
+    // Initial setup
+    updateVerb(); // Display the first verb
   </script>
 </body>
 </html>
