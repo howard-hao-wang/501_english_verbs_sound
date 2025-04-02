@@ -88,7 +88,7 @@
 
   <script>
     const verbs = [
-         {en: "Accept", cn: "I accept your apology for being late."},
+       {en: "Accept", cn: "I accept your apology for being late."},
       {en: "Achieve", cn: "She worked hard to achieve her goal of running a marathon."},
       {en: "Act", cn: "You need to act quickly if you want to catch that train."},
       {en: "Add", cn: "Can you add some salt to the soup, please?"},
@@ -500,26 +500,33 @@
       {en: "Yield", cn: "This investment should yield a good return."}
     ];
 
-    let index = 0;
+    let index = 0; // Current verb index
     let speed = 1; // Default speed
-    let americanVoice = null; // American voice will be selected dynamically
-    let interval;
+    let americanVoice = null; // Selected voice
+    let interval; // Flash interval
 
-    const numberElement = document.getElementById('number');
-    const verbElement = document.getElementById('verb');
-    const exampleElement = document.getElementById('example');
-    const speedControl = document.getElementById('speed');
+    const numberElement = document.getElementById("number");
+    const verbElement = document.getElementById("verb");
+    const exampleElement = document.getElementById("example");
+    const speedControl = document.getElementById("speed");
 
-    // Select an American English voice
-    function setVoice() {
-      const voices = speechSynthesis.getVoices();
-      americanVoice = voices.find(voice => voice.lang === "en-US");
-      if (!americanVoice) {
-        console.warn("No American English voice found. Using default voice.");
-      }
+    // Function to load the correct voice
+    function loadVoice() {
+      return new Promise((resolve) => {
+        const voices = speechSynthesis.getVoices();
+
+        // Find an American English voice
+        americanVoice = voices.find(voice => voice.lang === "en-US");
+
+        if (!americanVoice) {
+          console.warn("No American English voice found. Using the default voice.");
+        }
+
+        resolve();
+      });
     }
 
-    // Update verb and example
+    // Function to update the verb and example
     function updateVerb() {
       const currentVerb = verbs[index];
       numberElement.textContent = index + 1;
@@ -528,40 +535,52 @@
 
       pronounceVerb(currentVerb.en, currentVerb.cn);
 
+      // Increment index and loop back if necessary
       index = (index + 1) % verbs.length;
     }
 
-    // Pronounce the verb and example
+    // Function to pronounce the verb and example
     function pronounceVerb(verb, example) {
       const utterance = new SpeechSynthesisUtterance(`${verb}. ${example}`);
       if (americanVoice) {
         utterance.voice = americanVoice; // Use the American English voice
       }
-      utterance.rate = speed; // Adjust speech speed
+      utterance.rate = speed; // Set the rate according to the slider
       speechSynthesis.speak(utterance);
 
-      // Synchronize flash speed with speech
+      // Wait until speech ends to flash the next verb
       utterance.onend = () => {
-        setFlashTimer(); // Move to the next verb after speech ends
+        setFlashTimer();
       };
     }
 
     // Set the timer for flashing the next verb
     function setFlashTimer() {
-      clearInterval(interval); // Stop any existing interval
-      interval = setTimeout(updateVerb, speed * 2000); // Use speed to determine the flash duration
+      clearInterval(interval); // Clear any existing interval
+      interval = setTimeout(updateVerb, speed * 2000); // Adjust flash speed
     }
 
-    // Adjust speed for both flash and voice
-    speedControl.addEventListener('input', () => {
-      speed = parseFloat(speedControl.value); // Update speed value
+    // Handle speed slider input
+    speedControl.addEventListener("input", () => {
+      speed = parseFloat(speedControl.value); // Update speed
     });
 
-    // Populate voices and start
-    speechSynthesis.onvoiceschanged = () => {
-      setVoice();
-      updateVerb(); // Start displaying the first verb
-    };
+    // Initialize the app
+    function init() {
+      // Load voices and start the app
+      speechSynthesis.onvoiceschanged = async () => {
+        await loadVoice();
+        updateVerb(); // Start displaying verbs
+      };
+
+      // If voices are already loaded, start immediately
+      if (speechSynthesis.getVoices().length > 0) {
+        loadVoice().then(updateVerb);
+      }
+    }
+
+    // Start the app
+    init();
   </script>
 </body>
 </html>
