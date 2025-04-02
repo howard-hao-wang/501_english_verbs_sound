@@ -29,20 +29,20 @@
 
     h1 {
       margin: 0 0 10px;
-      font-size: 2.2em; /* Increased font size */
+      font-size: 2.2em;
       color: #0055cc;
     }
 
     p {
       margin: 0;
-      font-size: 1.7em; /* Increased font size */
+      font-size: 1.7em;
       color: #444;
       line-height: 1.4;
     }
 
     .number {
       display: inline-block;
-      min-width: 50px; /* Slightly bigger */
+      min-width: 50px;
       height: 50px;
       line-height: 50px;
       background-color: #0055cc;
@@ -62,21 +62,6 @@
     input[type="range"] {
       width: 300px;
       margin: 10px 0;
-    }
-
-    button {
-      margin-top: 15px;
-      padding: 10px 20px;
-      font-size: 1em;
-      color: white;
-      background-color: #0055cc;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #003d99;
     }
 
     @media (max-width: 600px) {
@@ -101,12 +86,9 @@
   <input type="range" id="speed" min="0.5" max="2" step="0.1" value="1" />
   <small>Left = Slow / Right = Fast</small>
 
-  <!-- Toggle Voice -->
-  <button id="toggle-voice">Turn Voice On</button>
-
   <script>
     const verbs = [
-          {en: "Accept", cn: "I accept your apology for being late."},
+         {en: "Accept", cn: "I accept your apology for being late."},
       {en: "Achieve", cn: "She worked hard to achieve her goal of running a marathon."},
       {en: "Act", cn: "You need to act quickly if you want to catch that train."},
       {en: "Add", cn: "Can you add some salt to the soup, please?"},
@@ -520,14 +502,22 @@
 
     let index = 0;
     let speed = 1; // Default speed
-    let useVoice = false; // Voice is off by default
+    let americanVoice = null; // American voice will be selected dynamically
     let interval;
 
     const numberElement = document.getElementById('number');
     const verbElement = document.getElementById('verb');
     const exampleElement = document.getElementById('example');
     const speedControl = document.getElementById('speed');
-    const toggleVoiceButton = document.getElementById('toggle-voice');
+
+    // Select an American English voice
+    function setVoice() {
+      const voices = speechSynthesis.getVoices();
+      americanVoice = voices.find(voice => voice.lang === "en-US");
+      if (!americanVoice) {
+        console.warn("No American English voice found. Using default voice.");
+      }
+    }
 
     // Update verb and example
     function updateVerb() {
@@ -536,12 +526,7 @@
       verbElement.textContent = currentVerb.en;
       exampleElement.textContent = currentVerb.cn;
 
-      if (useVoice) {
-        pronounceVerb(currentVerb.en, currentVerb.cn);
-      } else {
-        // If voice is off, still respect the speed for flashing
-        setFlashTimer();
-      }
+      pronounceVerb(currentVerb.en, currentVerb.cn);
 
       index = (index + 1) % verbs.length;
     }
@@ -549,10 +534,13 @@
     // Pronounce the verb and example
     function pronounceVerb(verb, example) {
       const utterance = new SpeechSynthesisUtterance(`${verb}. ${example}`);
+      if (americanVoice) {
+        utterance.voice = americanVoice; // Use the American English voice
+      }
       utterance.rate = speed; // Adjust speech speed
       speechSynthesis.speak(utterance);
 
-      // Ensure flash speed matches the spoken duration
+      // Synchronize flash speed with speech
       utterance.onend = () => {
         setFlashTimer(); // Move to the next verb after speech ends
       };
@@ -569,19 +557,11 @@
       speed = parseFloat(speedControl.value); // Update speed value
     });
 
-    // Toggle voice on/off
-    toggleVoiceButton.addEventListener('click', () => {
-      useVoice = !useVoice;
-      toggleVoiceButton.textContent = useVoice ? "Turn Voice Off" : "Turn Voice On";
-
-      // Start or reset the flash loop when toggling voice
-      if (!useVoice) {
-        setFlashTimer(); // Restart flash without voice
-      }
-    });
-
-    // Initial setup
-    updateVerb(); // Display the first verb
+    // Populate voices and start
+    speechSynthesis.onvoiceschanged = () => {
+      setVoice();
+      updateVerb(); // Start displaying the first verb
+    };
   </script>
 </body>
 </html>
